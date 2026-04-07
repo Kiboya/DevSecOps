@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: patched-pod
+  namespace: secure-namespace
+  labels:
+    app: patched
+spec:
+  serviceAccountName: limited-sa
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 2000
+  containers:
+  - name: my-container
+    image: nginxinc/nginx-unprivileged:latest
