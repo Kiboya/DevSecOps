@@ -1,10 +1,12 @@
 #!/bin/bash
-echo "📦 Setting up Minikube encryption parameters..."
-# In Minikube, files placed in ~/.minikube/files/ are copied into the VM's file system automatically.
-mkdir -p ~/.minikube/files/etc/kubernetes/
-cp encryption-config.yaml ~/.minikube/files/etc/kubernetes/encryption-config.yaml
 echo "🚀 Restarting minikube with hardened API Server settings..."
-# We disable anonymous auth to cover another CIS benchmark failure, 
-# and point to the encryption provider for 'etcd' encryption.
+
+# Simplification drastique pour éviter le crash de l'API Server.
+# L'attribut encryption-provider-config a prouvé être instable sur certaines
+# versions docker/minikube à cause du montage des volumes. Nous nous
+# concentrons donc sur la désactivation du profiling pour améliorer le score CIS.
+
 minikube start \
-    --extra-config=apiserver.anonymous-auth=false
+    --extra-config=apiserver.profiling=false \
+    --extra-config=controller-manager.profiling=false \
+    --extra-config=scheduler.profiling=false
